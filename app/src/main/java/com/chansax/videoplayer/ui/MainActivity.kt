@@ -1,12 +1,9 @@
-package com.chansax.videoplayer
+package com.chansax.videoplayer.ui
 
-import android.media.AudioManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.DefaultRenderersFactory
@@ -17,13 +14,8 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-import android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-import android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
-import android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE
-import androidx.recyclerview.widget.GridLayoutManager
+import com.chansax.videoplayer.R
+import com.chansax.videoplayer.adapter.GridItemDecoration
 import com.chansax.videoplayer.adapter.VideoAdapter
 import com.chansax.videoplayer.common.VIDEOINFO
 import com.chansax.videoplayer.data.VideoInfo
@@ -50,12 +42,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createVideoList() {
-        val videoInfo: List<VideoInfo> = Gson().fromJson(VIDEOINFO, object: TypeToken<List<VideoInfo>>() {}.type)
+        val videoInfo: List<VideoInfo> = Gson().fromJson(VIDEOINFO, object : TypeToken<List<VideoInfo>>() {}.type)
         val videoAdapter = VideoAdapter(this, videoInfo)
-        recycler.apply { adapter = videoAdapter }
+        recyclerView?.apply {
+            adapter = videoAdapter
+            addItemDecoration(GridItemDecoration(8))
+        }
     }
-
-
+    
     override fun onStart() {
         super.onStart()
         if (Util.SDK_INT > 23) {
@@ -108,9 +102,11 @@ class MainActivity : AppCompatActivity() {
     var player: ExoPlayer? = null
 
     private fun initializePlayer() {
-        player = ExoPlayerFactory.newSimpleInstance(this,
+        player = ExoPlayerFactory.newSimpleInstance(
+            this,
             DefaultRenderersFactory(this),
-            DefaultTrackSelector(), DefaultLoadControl())
+            DefaultTrackSelector(), DefaultLoadControl()
+        )
 
         playerView?.player = player
         player?.playWhenReady = true
@@ -122,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         player?.prepare(mediaSource, true, false)
     }
 
-    private fun buildMediaSource(uri: Uri) : MediaSource {
+    private fun buildMediaSource(uri: Uri): MediaSource {
 //        return ExtractorMediaSource.Factory(DefaultHttpDataSourceFactory("lame").crea)
         return ExtractorMediaSource.Factory(
             DefaultHttpDataSourceFactory("exoplayer")
