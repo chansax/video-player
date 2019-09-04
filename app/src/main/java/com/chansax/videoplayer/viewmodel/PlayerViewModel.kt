@@ -20,6 +20,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     private val playerState = MutableLiveData<ExoplayerState>()
     private val exoPlayer = MutableLiveData<ExoPlayer>()
     private val videoList = MutableLiveData<List<VideoInfo>>()
+    private var playingIndex = 0
 
     fun getPlayerState(): LiveData<ExoplayerState> = playerState
     fun getPlayer(): LiveData<ExoPlayer> = exoPlayer
@@ -42,8 +43,14 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun playIndex(index: Int) {
+        videoList.value?.get(index)?.url?.let {
+            playingIndex = index
+            videoPlayer.play(it)
+        }
+    }
+
     fun playUrl(url: String) {
-//        val link = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
         videoPlayer.play(url)
     }
 

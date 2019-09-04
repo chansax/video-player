@@ -20,9 +20,10 @@ import com.chansax.videoplayer.glide.GlideOptions
 
 class VideoAdapter(
     private val context: Context,
-    private var itemList: List<VideoInfo>?
+    val adapterOnClick: (Any) -> Unit?
 ) : RecyclerView.Adapter<VideoAdapter.ViewHolder>() {
 
+    private var itemList: List<VideoInfo> = listOf()
     private val glideOptions = GlideOptions().frame(10000000)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,20 +35,16 @@ class VideoAdapter(
         val item = itemList?.get(position)
         holder.itemName?.text = item?.title
 
-        GlideApp.with(context).load(item?.url).apply(glideOptions)
-            .centerCrop()
-//            .transform(RoundedCornersTransformation(8, 10))
-            .into(holder.itemImage)
+        item?.url.let {
+            holder.index = position
+            GlideApp.with(context).load(it).apply(glideOptions)
+                .centerCrop()
+                .into(holder.itemImage)
+        }
     }
 
     override fun getItemCount(): Int {
         return itemList?.size ?: 0
-    }
-
-    init {
-        if (itemList == null) {
-            itemList = listOf()
-        }
     }
 
     fun setItems(items: List<VideoInfo>?) {
@@ -59,15 +56,7 @@ class VideoAdapter(
         notifyDataSetChanged()
     }
 
-    fun addItems(items: List<VideoInfo>?) {
-        if (items == null || items.isEmpty())
-            return
-
-        itemList = itemList?.plus(items)
-        notifyDataSetChanged()
-    }
-
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         @BindView(R.id.video_image)
         lateinit var itemImage: ImageView
@@ -75,8 +64,11 @@ class VideoAdapter(
         @BindView(R.id.video_name)
         lateinit var itemName: TextView
 
+        var index: Int = -1
+
         init {
             ButterKnife.bind(this, itemView)
+            itemView.setOnClickListener { adapterOnClick(index as Any) }
         }
     }
 }
