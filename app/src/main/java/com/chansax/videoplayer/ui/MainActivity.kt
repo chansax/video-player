@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 //        volumeControlStream = AudioManager.STREAM_MUSIC
 //        createMediaSession()
 //        createPlayer()
-        createVideoList()
+//        createVideoList()
     }
 
     private fun createVideoList() {

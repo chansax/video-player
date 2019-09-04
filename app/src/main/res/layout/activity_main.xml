@@ -11,7 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="320dp"
         android:layout_marginBottom="484dp"
+        app:fastforward_increment="30000"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:rewind_increment="15000"
+        app:show_buffering="when_playing"
+        app:show_timeout="10000"
         tools:layout_editor_absoluteX="16dp" />
 
 

@@ -4,4 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/playerView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    app:fastforward_increment="30000"
+    app:rewind_increment="15000"
+    app:show_buffering="when_playing"
+    app:show_timeout="10000" />
