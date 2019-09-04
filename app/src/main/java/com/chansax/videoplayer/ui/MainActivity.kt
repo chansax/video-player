@@ -1,73 +1,77 @@
 package com.chansax.videoplayer.ui
 
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerFactory
-import kotlinx.android.synthetic.main.activity_main.*
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.util.Util
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.chansax.videoplayer.R
 import com.chansax.videoplayer.adapter.GridItemDecoration
 import com.chansax.videoplayer.adapter.VideoAdapter
 import com.chansax.videoplayer.common.VIDEOINFO
 import com.chansax.videoplayer.data.VideoInfo
+import com.chansax.videoplayer.viewmodel.ExoplayerState
+import com.chansax.videoplayer.viewmodel.PlayerViewModel
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.util.Util
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-//    private val mediaSession: MediaSessionCompat by lazy { createMediaSession() }
-//    private val mediaSessionConnector: MediaSessionConnector by lazy { createMediaSessionConnector() }
-//    private val playerState by lazy { PlayerState() }
-//    private lateinit var playerHolder: PlayerHolder
-
+    private lateinit var playerViewModel: PlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        volumeControlStream = AudioManager.STREAM_MUSIC
-//        createMediaSession()
-//        createPlayer()
-//        createVideoList()
+        playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel::class.java)
+        playerViewModel.getPlayerState().observe(this, Observer<ExoplayerState> {
+
+        })
+
+        playerViewModel.getPlayer().observe(this, Observer<ExoPlayer> {
+            playerView?.player = it
+        })
+
+        setupVideoList()
     }
 
-    private fun createVideoList() {
-        val videoInfo: List<VideoInfo> = Gson().fromJson(VIDEOINFO, object : TypeToken<List<VideoInfo>>() {}.type)
-        val videoAdapter = VideoAdapter(this, videoInfo)
+    private fun setupVideoList() {
+//        val videoInfo: List<VideoInfo> = Gson().fromJson(VIDEOINFO, object : TypeToken<List<VideoInfo>>() {}.type)
+        val videoAdapter = VideoAdapter(this, null)
         recyclerView?.apply {
             adapter = videoAdapter
             addItemDecoration(GridItemDecoration(8))
         }
+
+        playerViewModel.getVideoList().observe(this, Observer<List<VideoInfo>> {
+            videoAdapter.setItems(it)
+        })
+
+        playerViewModel.fetchVideoList()
     }
-    
+
     override fun onStart() {
         super.onStart()
         if (Util.SDK_INT > 23) {
-            initializePlayer()
+            playerViewModel.initializePlayer()
         }
     }
 
     public override fun onPause() {
         super.onPause()
         if (Util.SDK_INT <= 23) {
-            releasePlayer()
+            playerViewModel.releasePlayer()
         }
     }
 
     public override fun onStop() {
         super.onStop()
         if (Util.SDK_INT > 23) {
-            releasePlayer()
+            playerViewModel.releasePlayer()
         }
     }
 
@@ -76,17 +80,7 @@ class MainActivity : AppCompatActivity() {
 //        hideSystemUi()
 
         if (Util.SDK_INT <= 23 || player == null) {
-            initializePlayer()
-        }
-    }
-
-    private fun releasePlayer() {
-        if (player != null) {
-//            playbackPosition = player?.getCurrentPosition()
-//            currentWindow = player?.getCurrentWindowIndex()
-//            playWhenReady = player?.getPlayWhenReady()
-            player?.release()
-            player = null
+            playerViewModel.initializePlayer()
         }
     }
 
@@ -102,51 +96,18 @@ class MainActivity : AppCompatActivity() {
     var player: ExoPlayer? = null
 
     private fun initializePlayer() {
-        player = ExoPlayerFactory.newSimpleInstance(
-            this,
-            DefaultRenderersFactory(this),
-            DefaultTrackSelector(), DefaultLoadControl()
-        )
-
-        playerView?.player = player
-        player?.playWhenReady = true
-        player?.seekTo(0, 0)
-
-        val uri = Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
-//        val uri = Uri.parse(getString(R.string.media_url))
-        val mediaSource = buildMediaSource(uri)
-        player?.prepare(mediaSource, true, false)
+//        player = ExoPlayerFactory.newSimpleInstance(
+//            this,
+//            DefaultRenderersFactory(this),
+//            DefaultTrackSelector(), DefaultLoadControl()
+//        )
+//
+//        playerView?.player = player
+//        player?.seekTo(0, 0)
+//
+//        val uri = Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
+////        val uri = Uri.parse(getString(R.string.media_url))
+//        val mediaSource = buildMediaSource(uri)
+//        player?.prepare(mediaSource, true, false)
     }
-
-    private fun buildMediaSource(uri: Uri): MediaSource {
-//        return ExtractorMediaSource.Factory(DefaultHttpDataSourceFactory("lame").crea)
-        return ExtractorMediaSource.Factory(
-            DefaultHttpDataSourceFactory("exoplayer")
-        ).createMediaSource(uri)
-    }
-
-//    override fun onStart() {
-//        super.onStart()
-//        startPlayer()
-//        activateMediaSession()
-//    }
-//
-//    override fun onStop() {
-//        super.onStop()
-//        stopPlayer()
-//        deactivateMediaSession()
-//    }
-//
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        releasePlayer()
-//        releaseMediaSession()
-//    }
-//
-//    private fun createMediaSession() : MediaSessionCompat = MediaSessionCompat(this, packageName)
-//
-//    private fun createMediaSessionConnector(): MediaSessionConnector =
-//            MediaSessionConnector(mediaSession).apply {
-//
-//            }
 }
