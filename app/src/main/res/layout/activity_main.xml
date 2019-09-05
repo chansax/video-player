@@ -22,7 +22,8 @@
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="240dp"
+        app:resize_mode="fill"
         app:fastforward_increment="30000"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"

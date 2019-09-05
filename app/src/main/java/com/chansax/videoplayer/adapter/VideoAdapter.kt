@@ -34,12 +34,13 @@ class VideoAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = itemList?.get(position)
-        holder.itemName?.text = item?.title
+        val item = itemList.get(position)
+        holder.itemName.text = item.title
 
-        item?.url.let {
+        item.url.let {
             holder.index = position
             GlideApp.with(context).load(it).apply(glideOptions)
+                .placeholder(R.drawable.ic_shortcut_featured_video)
                 .centerCrop()
                 .into(holder.itemImage)
         }

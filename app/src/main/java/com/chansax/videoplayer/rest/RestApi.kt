@@ -1,6 +1,5 @@
 package com.chansax.videoplayer.rest
 
-import com.chansax.videoplayer.rest.calls.VideoApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -9,7 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by chandan on 2019-09-04.
  * Implementation of Retrofit instance for network calls.
  */
-
 
 object RestApi {
     private const val BASE_URL = "https://cmh-external-files.s3.amazonaws.com/"
