@@ -47,10 +47,13 @@ class MainActivity : AppCompatActivity() {
         recyclerView?.apply {
             val videoAdapter = VideoAdapter(this@MainActivity) { item -> onClick(item) }
             adapter = videoAdapter
-            addItemDecoration(GridItemDecoration(8))
+            addItemDecoration(GridItemDecoration(16))
 
             playerViewModel.getVideoList().observe(this@MainActivity, Observer<List<VideoInfo>> {
                 videoAdapter.setItems(it)
+                if (it.isNotEmpty()) {
+                    onClick(0)
+                }
             })
 
             playerViewModel.fetchVideoList()

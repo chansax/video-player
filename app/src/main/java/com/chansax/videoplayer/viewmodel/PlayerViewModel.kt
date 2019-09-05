@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.*
 import com.chansax.videoplayer.data.VideoInfo
+import com.chansax.videoplayer.player.PlayerCallback
 import com.chansax.videoplayer.player.VideoPlayer
 import com.chansax.videoplayer.player.VideoPlayerImpl
 import com.chansax.videoplayer.rest.calls.FetchVideo
@@ -27,7 +28,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     fun getVideoList(): LiveData<List<VideoInfo>> = videoList
 
     fun fetchVideoList() {
-        FetchVideo(object: FetchVideo.VideoCallback {
+        playingIndex = -1
+        FetchVideo(object : FetchVideo.VideoCallback {
             override fun apiResponse(videoItems: List<VideoInfo>?) {
                 videoItems?.let {
                     videoList.postValue(videoItems)
@@ -36,10 +38,32 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         }).download()
     }
 
+    private fun resumeCurrent() {
+        if (playingIndex >= 0) {
+            videoList.value?.size?.compareTo(playingIndex)?.let {
+                if (it > 0) {
+                    playIndex(playingIndex)
+                }
+            }
+        }
+    }
+
     fun initializePlayer() {
         val player = videoPlayer.getPlayerImpl()
         player?.let {
             exoPlayer.postValue(player)
+            videoPlayer.setCallback(object : PlayerCallback {
+                override fun playEnded() {
+                    // play next video
+                    videoList.value?.size?.compareTo(playingIndex)?.let {
+                        if (it > 0) {
+                            playingIndex++
+                            playIndex(playingIndex)
+                        }
+                    }
+                }
+            })
+            resumeCurrent()
         }
     }
 

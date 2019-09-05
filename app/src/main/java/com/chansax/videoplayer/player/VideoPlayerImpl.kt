@@ -24,6 +24,8 @@ class VideoPlayerImpl(private val context: Context) : VideoPlayer {
     private var startAutoPlay: Boolean = false
     private var startWindow: Int = C.INDEX_UNSET
     private var startPosition: Long = C.TIME_UNSET
+    private val eventListener = PlayerEventListener()
+    private var callback:PlayerCallback? = null
 
 
     private var exoPlayer: ExoPlayer? = null
@@ -54,9 +56,16 @@ class VideoPlayerImpl(private val context: Context) : VideoPlayer {
             startWindow = it.currentWindowIndex
             startAutoPlay = it.playWhenReady
         }
+        exoPlayer?.removeListener(eventListener)
         exoPlayer?.stop(true)
         exoPlayer?.release()
         exoPlayer = null
+    }
+
+    override fun setCallback(cb: PlayerCallback) {
+        cb?.let {
+            this.callback = cb
+        }
     }
 
     private fun updateStartPosition() {
@@ -86,45 +95,46 @@ class VideoPlayerImpl(private val context: Context) : VideoPlayer {
                     & Analytics Listener.
                  */
 
-                addListener(object : Player.EventListener {
-                    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
-                    }
-
-                    override fun onSeekProcessed() {
-                    }
-
-                    override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
-                    }
-
-                    override fun onPlayerError(error: ExoPlaybackException?) {
-                        error?.let {
-                            Log.e("Test-Player", it.message, it)
-                        }
-                    }
-
-                    override fun onLoadingChanged(isLoading: Boolean) {
-                    }
-
-                    override fun onPositionDiscontinuity(reason: Int) {
-                    }
-
-                    override fun onRepeatModeChanged(repeatMode: Int) {
-                    }
-
-                    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-                    }
-
-                    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
-                    }
-
-                    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                        Log.e(
-                            "Test-Player",
-                            "playWhenReady: ".plus(playWhenReady).plus(" playbackState: ").plus(playbackState)
-                        )
-                    }
-                })
+                addListener(eventListener)
             }
+    }
+
+    private inner class PlayerEventListener : Player.EventListener {
+        override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
+        }
+
+        override fun onSeekProcessed() {
+        }
+
+        override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
+        }
+
+        override fun onPlayerError(error: ExoPlaybackException?) {
+            error?.let {
+                Log.e("Test-Player", it.message, it)
+            }
+        }
+
+        override fun onLoadingChanged(isLoading: Boolean) {
+        }
+
+        override fun onPositionDiscontinuity(reason: Int) {
+        }
+
+        override fun onRepeatModeChanged(repeatMode: Int) {
+        }
+
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+        }
+
+        override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
+        }
+
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            when(playbackState) {
+                Player.STATE_ENDED -> callback?.playEnded()
+            }
+        }
     }
 }
 

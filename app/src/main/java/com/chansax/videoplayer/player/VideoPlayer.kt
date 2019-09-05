@@ -16,5 +16,11 @@ interface VideoPlayer {
 
     fun releasePlayer()
 
+    fun setCallback(callback: PlayerCallback)
+
 //    fun setMediaSessionState()
+}
+
+interface PlayerCallback{
+    fun playEnded()
 }
