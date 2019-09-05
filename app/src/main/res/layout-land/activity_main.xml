@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:fastforward_increment="30000"
+    app:resize_mode="fill"
     app:rewind_increment="15000"
     app:show_buffering="when_playing"
-    app:show_timeout="10000" />
+    app:show_timeout="2000" />
