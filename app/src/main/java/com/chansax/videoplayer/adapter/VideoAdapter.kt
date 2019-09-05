@@ -16,6 +16,8 @@ import com.chansax.videoplayer.glide.GlideOptions
 
 /**
  * Created by chandan on 2019-08-31.
+ *
+ * This class is Adapter implementation for the Recycler View.
  */
 
 class VideoAdapter(

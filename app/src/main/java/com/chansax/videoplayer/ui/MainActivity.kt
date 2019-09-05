@@ -9,12 +9,10 @@ import com.chansax.videoplayer.R
 import com.chansax.videoplayer.adapter.GridItemDecoration
 import com.chansax.videoplayer.adapter.VideoAdapter
 import com.chansax.videoplayer.data.VideoInfo
-import com.chansax.videoplayer.viewmodel.ExoplayerState
 import com.chansax.videoplayer.viewmodel.PlayerViewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,11 +22,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        when (toolbar) {
+            null -> {hideSystemUi()}
+            else -> {setSupportActionBar(toolbar)}
+        }
+
         playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel::class.java)
-        playerViewModel.getPlayerState().observe(this, Observer<ExoplayerState> {
-
-        })
-
         playerViewModel.getPlayer().observe(this, Observer<ExoPlayer> {
             playerView?.player = it
         })
@@ -83,7 +82,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-//        hideSystemUi()
 
         if (Util.SDK_INT <= 23) {
             playerViewModel.initializePlayer()
@@ -91,11 +89,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideSystemUi() {
-        playerView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LOW_PROFILE
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_LOW_PROFILE
+                or View.SYSTEM_UI_FLAG_IMMERSIVE)
     }
 }

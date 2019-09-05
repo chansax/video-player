@@ -1,14 +1,13 @@
 package com.chansax.videoplayer.adapter
 
-import androidx.recyclerview.widget.RecyclerView
-import android.R.attr.right
-import android.R.attr.left
 import android.graphics.Rect
 import android.view.View
-
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by chandan on 2019-08-31.
+ *
+ * This class adds the spaces to the grid elements in the recyclerview.
  */
 
 class GridItemDecoration(var space: Int = 0) : RecyclerView.ItemDecoration() {

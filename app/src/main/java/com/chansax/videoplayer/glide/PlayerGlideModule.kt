@@ -10,6 +10,7 @@ import com.bumptech.glide.GlideBuilder
 
 /**
  * Created by chandan on 2019-08-31.
+ *  Configuration requirement for Glide 4.0 goes here.
  */
 
 @GlideModule

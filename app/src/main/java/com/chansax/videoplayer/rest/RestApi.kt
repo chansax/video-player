@@ -7,6 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 /**
  * Created by chandan on 2019-09-04.
+ * Implementation of Retrofit instance for network calls.
  */
 
 

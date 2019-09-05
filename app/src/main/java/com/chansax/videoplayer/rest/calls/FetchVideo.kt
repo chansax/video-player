@@ -8,6 +8,7 @@ import retrofit2.Response
 
 /**
  * Created by chandan on 2019-09-04.
+ * Call method to download video manifest file from server using Retrofit.
  */
 
 class FetchVideo(val callback: VideoCallback) {
@@ -28,5 +29,4 @@ class FetchVideo(val callback: VideoCallback) {
     interface VideoCallback {
         fun apiResponse(videoItems: List<VideoInfo>?)
     }
-
 }

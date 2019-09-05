@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.util.Util
 
 /**
  * Created by chandan on 2019-09-03.
+ *  Implementation of video player based on ExoPlayer.
  */
 
 class VideoPlayerImpl(private val context: Context) : VideoPlayer {

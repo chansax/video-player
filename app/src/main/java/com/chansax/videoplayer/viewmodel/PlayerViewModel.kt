@@ -12,18 +12,17 @@ import com.google.android.exoplayer2.ExoPlayer
 
 /**
  * Created by chandan on 2019-09-03.
+ * ViewModel implementation
  */
 
 class PlayerViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = getApplication<Application>().applicationContext
     private var videoPlayer: VideoPlayer = VideoPlayerImpl(context)
-    private val playerState = MutableLiveData<ExoplayerState>()
     private val exoPlayer = MutableLiveData<ExoPlayer>()
     private val videoList = MutableLiveData<List<VideoInfo>>()
     private var playingIndex = 0
 
-    fun getPlayerState(): LiveData<ExoplayerState> = playerState
     fun getPlayer(): LiveData<ExoPlayer> = exoPlayer
     fun getVideoList(): LiveData<List<VideoInfo>> = videoList
 
